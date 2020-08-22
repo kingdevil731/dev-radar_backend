@@ -4,6 +4,8 @@ const axios = require("axios");
 const Dev = require("../models/Developers");
 // utils
 const convert = require('../utils/parseStringAsArray');
+//find Connection
+const { findConnections, sendMessage } = require("../websocket");
 
 module.exports = {
     //@Listar os developers
@@ -19,6 +21,7 @@ module.exports = {
         let dev = await Dev.findOne({ github_username });
 
         if (!dev) {
+           
             // axios call GET
             const res = await axios.get(`https://api.github.com/users/${github_username}`);
             /*
@@ -42,7 +45,14 @@ module.exports = {
                 techs: techsArray,
                 location,
             });
+            // filtar as conexoes que estao no maximo ha 10km de distancia
+            // e que o novo dev tenha pelo menos uma das techs filtradas
+             const sentSocketMessageto = findConnections(
+                 {latitude, longitude}, 
+                 techsArray);
 
+           
+            sendMessage(sentSocketMessageto, "newDev", dev);
         }
         // retornamos a resposta em formato json
         return response.json(dev);

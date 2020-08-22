@@ -1,12 +1,21 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./routes');
+const http = require('http');
+const cors = require('cors');
+const {setupSocket} = require('./websocket');
 
 mongoose.connect('mongodb+srv://omni:omni@cluster0.vuy2a.mongodb.net/week10?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
 const app = express();
+const server = http.Server(app);
+// enviar o server como parametro para o setup
+setupSocket(server);
+// cors para habilitar o acesso de outro lugar/origin
+app.use(cors());
+// para usar json
 app.use(express.json());
 
 // Metodos Http: Get, Post, Put, Delete.~
@@ -19,5 +28,5 @@ app.use(express.json());
 // * Body : request.body ( Dados para criação ou alteração de um registro).
 
 app.use(routes);
-
-app.listen(3333);
+// ira receber a porta indicada pelo servidor caso nao consiga receber a porta 3333
+server.listen(process.env.PORT || 3333);

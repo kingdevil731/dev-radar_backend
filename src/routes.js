@@ -3,10 +3,13 @@ const { Router } = require("express");
 // rotas init
 const routes = Router();
 //Controladores abaixo para as rotas
-const DevControllers = require('./controllers/DevControllers');
+const DevControllers = require('./controllers/DevController');
 const SearchControllers = require('./controllers/SearchController');
+const MainController = require("./controllers/MainController");
 
 // rotas
+// informação geral das rotas
+routes.get("/", MainController.index);
 //* Listar developers com tecnologia's especificas
 routes.get("/search", SearchControllers.index);
 //* Listar os developers
